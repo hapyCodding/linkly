@@ -21,6 +21,7 @@ public class LinkService {
     private final LinkRepository linkRepository;
     private final ClickEventRepository clickEventRepository;
     private final ShortCodeGenerator shortCodeGenerator;
+    private final TitleFetcher titleFetcher;
     private final SimpMessagingTemplate messaging;
     private final LinklyProperties props;
 
@@ -28,16 +29,18 @@ public class LinkService {
             LinkRepository linkRepository,
             ClickEventRepository clickEventRepository,
             ShortCodeGenerator shortCodeGenerator,
+            TitleFetcher titleFetcher,
             SimpMessagingTemplate messaging,
             LinklyProperties props) {
         this.linkRepository = linkRepository;
         this.clickEventRepository = clickEventRepository;
         this.shortCodeGenerator = shortCodeGenerator;
+        this.titleFetcher = titleFetcher;
         this.messaging = messaging;
         this.props = props;
     }
 
-    @Transactional
+    // @Transactional 없이: 대상 페이지 title 수집(네트워크 I/O)을 DB 트랜잭션 밖에서 처리.
     public Link create(CreateLinkRequest request) {
         String code = generateUniqueCode();
         Instant expiresAt =
@@ -45,6 +48,7 @@ public class LinkService {
                         ? Instant.now().plus(request.expiresInDays(), ChronoUnit.DAYS)
                         : null;
         Link link = new Link(code, request.url(), expiresAt);
+        link.setTitle(titleFetcher.fetchTitle(request.url()));
         return linkRepository.save(link);
     }
 

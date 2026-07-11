@@ -53,6 +53,11 @@ export function LinkList({ links, selectedCode, onSelect, onDelete }: Props) {
               <CopyButton text={link.shortUrl} />
               {link.expired && <span className="badge-expired">만료됨</span>}
             </div>
+            {link.title && (
+              <div className="link-title" title={link.title}>
+                {link.title}
+              </div>
+            )}
             <div className="long-url" title={link.longUrl}>
               {link.longUrl}
             </div>
