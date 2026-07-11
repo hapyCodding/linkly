@@ -63,6 +63,18 @@ export async function deleteLink(code: string): Promise<void> {
   }
 }
 
+export async function updateTags(
+  code: string,
+  tags: string[],
+): Promise<LinkResponse> {
+  const res = await fetch(`${API_BASE}/api/links/${code}/tags`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tags }),
+  });
+  return handle<LinkResponse>(res);
+}
+
 export function qrUrl(code: string): string {
   return `${API_BASE}/api/links/${code}/qr`;
 }

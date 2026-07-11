@@ -9,7 +9,10 @@ import com.linkly.web.dto.ClickEventDto;
 import com.linkly.web.dto.CreateLinkRequest;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -49,7 +52,31 @@ public class LinkService {
                         : null;
         Link link = new Link(code, request.url(), expiresAt);
         link.setTitle(titleFetcher.fetchTitle(request.url()));
+        link.setTags(normalizeTags(request.tags()));
         return linkRepository.save(link);
+    }
+
+    /** 링크의 태그를 전체 교체한다. */
+    @Transactional
+    public Link updateTags(String code, List<String> tags) {
+        Link link =
+                linkRepository.findByCode(code).orElseThrow(() -> new LinkNotFoundException(code));
+        link.setTags(normalizeTags(tags));
+        return linkRepository.save(link);
+    }
+
+    /** 태그 정규화: 공백 제거, 빈 값 제외, 길이 30 제한, 최대 20개, 중복 제거(순서 유지). */
+    private Set<String> normalizeTags(List<String> tags) {
+        if (tags == null) {
+            return new LinkedHashSet<>();
+        }
+        return tags.stream()
+                .filter(t -> t != null)
+                .map(String::trim)
+                .filter(t -> !t.isEmpty())
+                .map(t -> t.length() > 30 ? t.substring(0, 30) : t)
+                .limit(20)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Transactional(readOnly = true)

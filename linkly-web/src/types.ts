@@ -7,6 +7,7 @@ export interface LinkResponse {
   createdAt: string;
   expiresAt: string | null;
   expired: boolean;
+  tags: string[];
 }
 
 export interface LabelCount {
@@ -40,4 +41,5 @@ export interface StatsResponse {
 export interface CreateLinkRequest {
   url: string;
   expiresInDays?: number | null;
+  tags?: string[];
 }

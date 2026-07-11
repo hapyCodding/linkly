@@ -2,6 +2,7 @@ package com.linkly.web.dto;
 
 import com.linkly.domain.Link;
 import java.time.Instant;
+import java.util.List;
 
 /** 링크 응답 (생성/목록 공통). */
 public record LinkResponse(
@@ -12,7 +13,8 @@ public record LinkResponse(
         long clickCount,
         Instant createdAt,
         Instant expiresAt,
-        boolean expired) {
+        boolean expired,
+        List<String> tags) {
 
     public static LinkResponse of(Link link, String baseUrl) {
         return new LinkResponse(
@@ -23,6 +25,7 @@ public record LinkResponse(
                 link.getClickCount(),
                 link.getCreatedAt(),
                 link.getExpiresAt(),
-                link.isExpired());
+                link.isExpired(),
+                link.getTags().stream().sorted().toList());
     }
 }

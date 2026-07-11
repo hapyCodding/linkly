@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { deleteLink, listLinks } from "./api";
+import { deleteLink, listLinks, updateTags } from "./api";
 import type { LinkResponse } from "./types";
 import { CreateLinkForm } from "./components/CreateLinkForm";
 import { LinkList } from "./components/LinkList";
@@ -10,6 +10,7 @@ export default function App() {
   const [links, setLinks] = useState<LinkResponse[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
 
   async function refresh() {
     try {
@@ -46,6 +47,20 @@ export default function App() {
     }
   }
 
+  async function onUpdateTags(code: string, tags: string[]) {
+    try {
+      const updated = await updateTags(code, tags);
+      setLinks((prev) => prev.map((l) => (l.code === code ? updated : l)));
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "태그 수정 실패");
+    }
+  }
+
+  const allTags = Array.from(new Set(links.flatMap((l) => l.tags))).sort();
+  const activeFilter = tagFilter && allTags.includes(tagFilter) ? tagFilter : null;
+  const visibleLinks =
+    activeFilter === null ? links : links.filter((l) => l.tags.includes(activeFilter));
+
   return (
     <div className="app">
       <header className="topbar">
@@ -64,11 +79,31 @@ export default function App() {
               ⚠ 백엔드에 연결할 수 없습니다 ({loadError}). API 서버(8081)가 떠 있는지 확인하세요.
             </p>
           )}
+          {allTags.length > 0 && (
+            <div className="tag-filter">
+              <button
+                className={`filter-pill ${activeFilter === null ? "active" : ""}`}
+                onClick={() => setTagFilter(null)}
+              >
+                전체
+              </button>
+              {allTags.map((t) => (
+                <button
+                  key={t}
+                  className={`filter-pill ${activeFilter === t ? "active" : ""}`}
+                  onClick={() => setTagFilter(t)}
+                >
+                  #{t}
+                </button>
+              ))}
+            </div>
+          )}
           <LinkList
-            links={links}
+            links={visibleLinks}
             selectedCode={selected}
             onSelect={setSelected}
             onDelete={onDelete}
+            onUpdateTags={onUpdateTags}
           />
         </section>
 

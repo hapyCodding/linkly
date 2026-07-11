@@ -6,6 +6,7 @@ import com.linkly.service.QrService;
 import com.linkly.web.dto.CreateLinkRequest;
 import com.linkly.web.dto.LinkResponse;
 import com.linkly.web.dto.StatsResponse;
+import com.linkly.web.dto.UpdateTagsRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -55,6 +57,12 @@ public class LinkController {
     @GetMapping("/{code}/stats")
     public StatsResponse stats(@PathVariable String code) {
         return analyticsService.statsFor(code);
+    }
+
+    @PutMapping("/{code}/tags")
+    public LinkResponse updateTags(
+            @PathVariable String code, @RequestBody UpdateTagsRequest request) {
+        return LinkResponse.of(linkService.updateTags(code, request.tags()), linkService.baseUrl());
     }
 
     @DeleteMapping("/{code}")

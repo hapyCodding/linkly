@@ -1,14 +1,20 @@
 package com.linkly.domain;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 /** 단축 링크 한 건. */
 @Entity
@@ -40,6 +46,12 @@ public class Link {
     /** 비정규화된 클릭 카운터 (빠른 조회용). */
     @Column(nullable = false)
     private long clickCount = 0;
+
+    /** 링크 정리용 태그 (link_tags 테이블). */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "link_tags", joinColumns = @JoinColumn(name = "link_id"))
+    @Column(name = "tag", length = 30)
+    private Set<String> tags = new HashSet<>();
 
     protected Link() {
         // JPA 전용
@@ -85,5 +97,13 @@ public class Link {
 
     public long getClickCount() {
         return clickCount;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 }

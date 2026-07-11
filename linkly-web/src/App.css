@@ -180,6 +180,80 @@
   text-overflow: ellipsis;
   margin-top: 2px;
 }
+
+/* ---- tags ---- */
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  margin-top: 7px;
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--accent-2);
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 20px;
+  padding: 2px 4px 2px 9px;
+}
+.tag-x {
+  background: transparent;
+  border: none;
+  color: var(--accent-2);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 0 2px;
+  opacity: 0.7;
+}
+.tag-x:hover {
+  opacity: 1;
+}
+.tag-input {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 20px;
+  color: var(--text);
+  font-size: 11px;
+  padding: 2px 9px;
+  width: 66px;
+  outline: none;
+}
+.tag-input:focus {
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+/* ---- tag filter bar ---- */
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.filter-pill {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-pill:hover {
+  color: var(--text);
+  border-color: #475569;
+}
+.filter-pill.active {
+  color: white;
+  background: var(--accent);
+  border-color: var(--accent);
+}
 .btn-ghost {
   background: transparent;
   border: 1px solid var(--border);

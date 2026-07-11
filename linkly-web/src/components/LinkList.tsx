@@ -7,6 +7,7 @@ interface Props {
   selectedCode: string | null;
   onSelect: (code: string) => void;
   onDelete: (code: string) => void;
+  onUpdateTags: (code: string, tags: string[]) => void;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -26,9 +27,36 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export function LinkList({ links, selectedCode, onSelect, onDelete }: Props) {
+function TagInput({ onAdd }: { onAdd: (tag: string) => void }) {
+  const [value, setValue] = useState("");
+  return (
+    <input
+      className="tag-input"
+      placeholder="+ 태그"
+      value={value}
+      onClick={(e) => e.stopPropagation()}
+      onChange={(e) => setValue(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const tag = value.trim();
+          if (tag) onAdd(tag);
+          setValue("");
+        }
+      }}
+    />
+  );
+}
+
+export function LinkList({
+  links,
+  selectedCode,
+  onSelect,
+  onDelete,
+  onUpdateTags,
+}: Props) {
   if (links.length === 0) {
-    return <p className="empty">아직 링크가 없습니다. 위에서 하나 만들어 보세요 👆</p>;
+    return <p className="empty">조건에 맞는 링크가 없습니다.</p>;
   }
   return (
     <ul className="link-list">
@@ -60,6 +88,32 @@ export function LinkList({ links, selectedCode, onSelect, onDelete }: Props) {
             )}
             <div className="long-url" title={link.longUrl}>
               {link.longUrl}
+            </div>
+            <div className="tags-row" onClick={(e) => e.stopPropagation()}>
+              {link.tags.map((tag) => (
+                <span key={tag} className="tag-chip">
+                  {tag}
+                  <button
+                    className="tag-x"
+                    title="태그 제거"
+                    onClick={() =>
+                      onUpdateTags(
+                        link.code,
+                        link.tags.filter((t) => t !== tag),
+                      )
+                    }
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              <TagInput
+                onAdd={(tag) => {
+                  if (!link.tags.includes(tag)) {
+                    onUpdateTags(link.code, [...link.tags, tag]);
+                  }
+                }}
+              />
             </div>
           </div>
           <div className="click-badge">
