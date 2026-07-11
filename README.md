@@ -3,6 +3,7 @@
 긴 URL을 짧은 링크로 만들고, 누가·언제·어디서·무엇으로 눌렀는지를 **실시간 대시보드**로 보여주는 포트폴리오용 풀스택 토이 프로젝트. 백엔드는 Java 21 + Spring Boot(DTO는 `record`), 프론트는 React 19 + Vite.
 
 ![stack](https://img.shields.io/badge/Java%2021-Spring%20Boot%203.4-6DB33F) ![stack](https://img.shields.io/badge/React%2019-Vite-646CFF) ![stack](https://img.shields.io/badge/DB-MariaDB-003545)
+[![Build & Publish to GHCR](https://github.com/hapyCodding/linkly/actions/workflows/deploy.yml/badge.svg)](https://github.com/hapyCodding/linkly/actions/workflows/deploy.yml)
 
 ## 무엇을 보여주나
 | 축 | 구현 |
@@ -73,7 +74,8 @@ npm run dev
 | WS | `/ws` → `/topic/clicks/{code}` | 클릭 실시간 구독 |
 
 ## 배포
-NAS(Synology) + MariaDB + DDNS 공개 절차는 [docs/deploy-nas.md](docs/deploy-nas.md) 참고.
+- 수동(tar 반입): NAS(Synology) + MariaDB + DDNS 공개 절차는 [docs/deploy-nas.md](docs/deploy-nas.md) 참고.
+- **CI/CD(자동)**: `main` push → GitHub Actions 빌드 → GHCR push → NAS Watchtower 자동 pull. [docs/ci-cd.md](docs/ci-cd.md) 참고.
 
 ## 참고
 - 국가는 `Accept-Language` 헤더 기반 간이 추정(데모 범위). 정밀 지오로케이션은 IP DB가 필요.
