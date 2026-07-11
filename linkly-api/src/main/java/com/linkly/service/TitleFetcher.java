@@ -36,39 +36,44 @@ public class TitleFetcher {
 
     private final HttpClient client =
             HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(3))
+                    .connectTimeout(Duration.ofSeconds(5))
                     .followRedirects(HttpClient.Redirect.NORMAL)
                     .build();
 
     public String fetchTitle(String url) {
         try {
             URI uri = URI.create(url);
-            if (isInternalAddress(uri.getHost())) {
-                log.debug("내부/사설 주소라 title 조회 생략: {}", uri.getHost());
+            String blockReason = internalBlockReason(uri.getHost());
+            if (blockReason != null) {
+                log.warn("title 조회 생략({}): {}", url, blockReason);
                 return null;
             }
             HttpRequest req =
                     HttpRequest.newBuilder(uri)
-                            .timeout(Duration.ofSeconds(4))
+                            .timeout(Duration.ofSeconds(6))
                             .header("User-Agent", "Mozilla/5.0 (compatible; LinklyBot/1.0)")
                             .header("Accept", "text/html,application/xhtml+xml")
                             .GET()
                             .build();
             HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
             if (resp.statusCode() >= 400) {
+                log.warn("title 조회 생략({}): HTTP {}", url, resp.statusCode());
                 return null;
             }
             String contentType = resp.headers().firstValue("content-type").orElse("");
             if (!contentType.isEmpty() && !contentType.toLowerCase().contains("html")) {
+                log.warn("title 조회 생략({}): content-type={}", url, contentType);
                 return null;
             }
             String body = resp.body();
             if (body != null && body.length() > MAX_BODY) {
                 body = body.substring(0, MAX_BODY);
             }
-            return extractTitle(body);
+            String title = extractTitle(body);
+            log.info("title 조회 성공({}): {}", url, title);
+            return title;
         } catch (Exception e) {
-            log.debug("title 조회 실패({}): {}", url, e.toString());
+            log.warn("title 조회 실패({}): {}", url, e.toString());
             return null;
         }
     }
@@ -109,10 +114,10 @@ public class TitleFetcher {
                 .replace("&nbsp;", " ");
     }
 
-    /** SSRF 방지: 루프백/사설/링크로컬 주소로는 요청하지 않는다. */
-    private boolean isInternalAddress(String host) {
+    /** SSRF 방지: 차단 사유 문자열을 반환(허용이면 null). 진단 로그용으로 사유를 구분한다. */
+    private String internalBlockReason(String host) {
         if (host == null || host.isBlank()) {
-            return true;
+            return "host 없음";
         }
         try {
             for (InetAddress addr : InetAddress.getAllByName(host)) {
@@ -120,12 +125,12 @@ public class TitleFetcher {
                         || addr.isSiteLocalAddress()
                         || addr.isAnyLocalAddress()
                         || addr.isLinkLocalAddress()) {
-                    return true;
+                    return "내부/사설 IP(" + addr.getHostAddress() + ")";
                 }
             }
-            return false;
+            return null; // 허용
         } catch (Exception e) {
-            return true; // 해석 실패 시 안전하게 차단
+            return "DNS 해석 실패(" + e + ")"; // 해석 실패 시 안전하게 차단
         }
     }
 }
