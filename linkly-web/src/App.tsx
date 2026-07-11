@@ -52,6 +52,7 @@ export default function App() {
         <div className="brand">
           <span className="logo">🔗</span> Linkly
           <span className="tag">URL 단축 · 실시간 클릭 애널리틱스</span>
+          <span className="ver">v0.2 · auto-deploy</span>
         </div>
       </header>
 
