@@ -15,7 +15,8 @@ FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
 COPY linkly-api/gradlew linkly-api/settings.gradle linkly-api/build.gradle ./
 COPY linkly-api/gradle ./gradle
-RUN ./gradlew --no-daemon dependencies >/dev/null 2>&1 || true
+# Windows에서 커밋되면 실행 비트가 빠질 수 있어 컨테이너에서 보장
+RUN chmod +x gradlew && ./gradlew --no-daemon dependencies >/dev/null 2>&1 || true
 COPY linkly-api/src ./src
 # 프론트 정적 산출물을 Spring static 으로 주입 → 단일 컨테이너 SPA 서빙
 COPY --from=web /web/dist ./src/main/resources/static
