@@ -3,7 +3,7 @@
 # (PC에서 docker save 한 linkly-api.tar 를 먼저 Container Manager 이미지 가져오기로 등록할 것)
 services:
   api:
-    image: linkly-api:0.1.0
+    image: linkly-api:0.2.0
     container_name: linkly-api
     restart: unless-stopped
     ports:

@@ -24,7 +24,7 @@ RUN ./gradlew --no-daemon clean bootJar
 # ---- 3) 런타임 ----
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
-COPY --from=build /app/build/libs/linkly-api-0.1.0.jar app.jar
+COPY --from=build /app/build/libs/linkly-api-0.2.0.jar app.jar
 EXPOSE 8080
 # DS220+ 메모리(2GB)에 맞춰 힙 제한
 ENV JAVA_OPTS="-Xms128m -Xmx320m"

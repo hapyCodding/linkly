@@ -83,6 +83,15 @@ public class LinkService {
         return link.getLongUrl();
     }
 
+    /** 링크와 그 클릭 이벤트를 함께 삭제한다. */
+    @Transactional
+    public void delete(String code) {
+        Link link =
+                linkRepository.findByCode(code).orElseThrow(() -> new LinkNotFoundException(code));
+        clickEventRepository.deleteByLinkId(link.getId());
+        linkRepository.delete(link);
+    }
+
     public String baseUrl() {
         return props.getBaseUrl();
     }

@@ -6,6 +6,7 @@ interface Props {
   links: LinkResponse[];
   selectedCode: string | null;
   onSelect: (code: string) => void;
+  onDelete: (code: string) => void;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -25,7 +26,7 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export function LinkList({ links, selectedCode, onSelect }: Props) {
+export function LinkList({ links, selectedCode, onSelect, onDelete }: Props) {
   if (links.length === 0) {
     return <p className="empty">아직 링크가 없습니다. 위에서 하나 만들어 보세요 👆</p>;
   }
@@ -60,6 +61,18 @@ export function LinkList({ links, selectedCode, onSelect }: Props) {
             <span className="click-num">{link.clickCount}</span>
             <span className="click-label">clicks</span>
           </div>
+          <button
+            className="btn-delete"
+            title="링크 삭제"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm(`/x/${link.code} 링크와 클릭 기록을 삭제할까요?`)) {
+                onDelete(link.code);
+              }
+            }}
+          >
+            ×
+          </button>
         </li>
       ))}
     </ul>

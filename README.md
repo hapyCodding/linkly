@@ -67,6 +67,7 @@ npm run dev
 | GET | `/api/links` | 링크 목록 |
 | GET | `/api/links/{code}/stats` | 대시보드 통계(국가/디바이스/추이/최근 클릭) |
 | GET | `/api/links/{code}/qr` | QR 코드 PNG |
+| DELETE | `/api/links/{code}` | 링크 + 클릭 기록 삭제 (204) |
 | GET | `/x/{code}` | 단축 링크 리다이렉트(302) + 클릭 적재 |
 | WS | `/ws` → `/topic/clicks/{code}` | 클릭 실시간 구독 |
 

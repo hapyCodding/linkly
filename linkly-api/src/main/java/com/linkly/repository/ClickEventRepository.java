@@ -4,12 +4,18 @@ import com.linkly.domain.ClickEvent;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ClickEventRepository extends JpaRepository<ClickEvent, Long> {
 
     long countByLinkId(Long linkId);
+
+    /** 링크 삭제 시 해당 클릭 이벤트를 한 번에 제거. */
+    @Modifying
+    @Query("delete from ClickEvent c where c.linkId = :linkId")
+    void deleteByLinkId(@Param("linkId") Long linkId);
 
     List<ClickEvent> findTop20ByLinkIdOrderByClickedAtDesc(Long linkId);
 

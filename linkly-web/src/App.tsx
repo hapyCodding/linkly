@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { listLinks } from "./api";
+import { deleteLink, listLinks } from "./api";
 import type { LinkResponse } from "./types";
 import { CreateLinkForm } from "./components/CreateLinkForm";
 import { LinkList } from "./components/LinkList";
@@ -32,6 +32,20 @@ export default function App() {
     setSelected(link.code);
   }
 
+  async function onDelete(code: string) {
+    try {
+      await deleteLink(code);
+      setLinks((prev) => {
+        const next = prev.filter((l) => l.code !== code);
+        // 삭제한 링크가 선택돼 있었으면 목록의 첫 항목으로 이동
+        if (selected === code) setSelected(next.length > 0 ? next[0].code : null);
+        return next;
+      });
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "삭제 실패");
+    }
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -49,7 +63,12 @@ export default function App() {
               ⚠ 백엔드에 연결할 수 없습니다 ({loadError}). API 서버(8081)가 떠 있는지 확인하세요.
             </p>
           )}
-          <LinkList links={links} selectedCode={selected} onSelect={setSelected} />
+          <LinkList
+            links={links}
+            selectedCode={selected}
+            onSelect={setSelected}
+            onDelete={onDelete}
+          />
         </section>
 
         <section className="right">

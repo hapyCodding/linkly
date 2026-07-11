@@ -49,6 +49,20 @@ export async function getStats(code: string): Promise<StatsResponse> {
   );
 }
 
+export async function deleteLink(code: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/links/${code}`, { method: "DELETE" });
+  if (!res.ok) {
+    let msg = `${res.status} ${res.statusText}`;
+    try {
+      const body = await res.json();
+      if (body?.message) msg = body.message;
+    } catch {
+      /* 204 No Content 등 본문 없음 */
+    }
+    throw new Error(msg);
+  }
+}
+
 export function qrUrl(code: string): string {
   return `${API_BASE}/api/links/${code}/qr`;
 }
