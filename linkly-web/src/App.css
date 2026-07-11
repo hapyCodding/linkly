@@ -228,6 +228,19 @@
   border-style: solid;
 }
 
+/* ---- sort bar ---- */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.sort-label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-right: 2px;
+}
+
 /* ---- tag filter bar ---- */
 .tag-filter {
   display: flex;

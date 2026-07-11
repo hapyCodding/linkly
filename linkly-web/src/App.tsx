@@ -11,6 +11,7 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<"recent" | "clicks">("recent");
 
   async function refresh() {
     try {
@@ -58,8 +59,13 @@ export default function App() {
 
   const allTags = Array.from(new Set(links.flatMap((l) => l.tags))).sort();
   const activeFilter = tagFilter && allTags.includes(tagFilter) ? tagFilter : null;
-  const visibleLinks =
+  const filteredLinks =
     activeFilter === null ? links : links.filter((l) => l.tags.includes(activeFilter));
+  const visibleLinks = [...filteredLinks].sort((a, b) =>
+    sortBy === "clicks"
+      ? b.clickCount - a.clickCount || b.createdAt.localeCompare(a.createdAt)
+      : b.createdAt.localeCompare(a.createdAt),
+  );
 
   return (
     <div className="app">
@@ -78,6 +84,23 @@ export default function App() {
             <p className="form-error">
               ⚠ 백엔드에 연결할 수 없습니다 ({loadError}). API 서버(8081)가 떠 있는지 확인하세요.
             </p>
+          )}
+          {links.length > 0 && (
+            <div className="sort-bar">
+              <span className="sort-label">정렬</span>
+              <button
+                className={`filter-pill ${sortBy === "recent" ? "active" : ""}`}
+                onClick={() => setSortBy("recent")}
+              >
+                최신순
+              </button>
+              <button
+                className={`filter-pill ${sortBy === "clicks" ? "active" : ""}`}
+                onClick={() => setSortBy("clicks")}
+              >
+                클릭순
+              </button>
+            </div>
           )}
           {allTags.length > 0 && (
             <div className="tag-filter">
