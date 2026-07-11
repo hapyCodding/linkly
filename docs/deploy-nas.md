@@ -27,8 +27,8 @@ FLUSH PRIVILEGES;
 ## 2. 이미지 빌드 (PC에서 — 2GB NAS 부담 회피)
 ```powershell
 # linkly 리포 루트에서
-docker build -t linkly-api:0.1.0 .
-docker save linkly-api:0.1.0 -o linkly-api.tar
+docker build -t linkly-api:0.2.0 .
+docker save linkly-api:0.2.0 -o linkly-api.tar
 ```
 `linkly-api.tar` 를 `\\192.168.35.2\docker\linkly\` 로 복사 →
 **Container Manager > 이미지 > 가져오기** 로 등록.
@@ -46,8 +46,8 @@ NAS `/volume1/docker/linkly/` 에 두 파일을 둔다:
 `.env`:
 ```
 DB_PASSWORD=<1단계에서 정한 linkly 비밀번호>
-LINKLY_BASE_URL=https://psh55401.synology.me:8444
-LINKLY_CORS_ALLOWED_ORIGINS=https://psh55401.synology.me:8444
+LINKLY_BASE_URL=https://your-nas.synology.me:8444
+LINKLY_CORS_ALLOWED_ORIGINS=https://your-nas.synology.me:8444
 ```
 > 이미지를 이미 가져왔다면 compose의 `build:` 블록은 지워도 된다(그러면 `image:` 만 사용).
 > NAS에서 직접 빌드하려면 리포 전체를 이 폴더에 두고 그대로 실행(느림).
@@ -60,19 +60,19 @@ LINKLY_CORS_ALLOWED_ORIGINS=https://psh55401.synology.me:8444
 - API: `http://192.168.35.2:18081/api/links`
 
 ## 4. 인증서 + 리버스 프록시 (DSM)
-1. **제어판 > 보안 > 인증서**: `psh55401.synology.me` 인증서 확인(Synology DDNS 자동 인증서 또는 Let's Encrypt).
+1. **제어판 > 보안 > 인증서**: `your-nas.synology.me` 인증서 확인(Synology DDNS 자동 인증서 또는 Let's Encrypt).
 2. **제어판 > 로그인 포털 > 고급 > 리버스 프록시 > 생성**:
-   - 소스: `HTTPS` / `psh55401.synology.me` / `8444`
+   - 소스: `HTTPS` / `your-nas.synology.me` / `8444`
    - 대상: `HTTP` / `localhost` / `18081`
    - **사용자 지정 헤더 > WebSocket** 추가 (Upgrade/Connection 전달) — 실시간 클릭 피드에 필수.
 3. 공유기에서 `8444` 포워딩. 리버스 프록시에 위 인증서 지정.
 
 **공개 확인**:
 ```
-https://psh55401.synology.me:8444/            (대시보드)
-https://psh55401.synology.me:8444/api/links   (API)
+https://your-nas.synology.me:8444/            (대시보드)
+https://your-nas.synology.me:8444/api/links   (API)
 ```
-단축 링크는 `https://psh55401.synology.me:8444/x/{code}` 형태로 생성된다.
+단축 링크는 `https://your-nas.synology.me:8444/x/{code}` 형태로 생성된다.
 
 ## 5. 공개 주의 (인증 없음)
 이 데모 API는 인증이 없다 → 누구나 링크를 만들 수 있다. 둘 중 하나를 택한다.
