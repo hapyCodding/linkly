@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { deleteLink, listLinks, updateTags } from "./api";
+import { deleteLink, listLinks, updateMemo, updateTags } from "./api";
 import type { LinkResponse } from "./types";
 import { CreateLinkForm } from "./components/CreateLinkForm";
 import { LinkList } from "./components/LinkList";
@@ -54,6 +54,15 @@ export default function App() {
       setLinks((prev) => prev.map((l) => (l.code === code ? updated : l)));
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : "태그 수정 실패");
+    }
+  }
+
+  async function onUpdateMemo(code: string, memo: string) {
+    try {
+      const updated = await updateMemo(code, memo);
+      setLinks((prev) => prev.map((l) => (l.code === code ? updated : l)));
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "메모 수정 실패");
     }
   }
 
@@ -127,6 +136,7 @@ export default function App() {
             onSelect={setSelected}
             onDelete={onDelete}
             onUpdateTags={onUpdateTags}
+            onUpdateMemo={onUpdateMemo}
           />
         </section>
 

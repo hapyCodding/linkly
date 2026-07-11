@@ -12,7 +12,7 @@
 | 성능 | 리다이렉트 핫패스에서 클릭 카운터 원자적 증가(`@Modifying` update) + 인덱스 |
 | 실시간 | STOMP over WebSocket 으로 클릭 이벤트 라이브 푸시 → 차트가 즉시 반응 |
 | 데이터 시각화 | Recharts 로 시간대별 추이(Area) · 국가별(Bar) · 디바이스(Pie) |
-| 부가기능 | ZXing QR 코드 생성, 링크 만료(TTL), 링크 삭제, 태그로 정리·필터 |
+| 부가기능 | ZXing QR 코드 생성, 링크 만료(TTL), 링크 삭제, 태그로 정리·필터, 메모 |
 | 메타 수집 | 링크 생성 시 대상 페이지 og:title/&lt;title&gt; 자동 수집 (SSRF 가드: 내부/사설 IP 차단) |
 | 배포 | 멀티스테이지 Docker + DSM 리버스 프록시 + DDNS (Synology NAS) |
 
@@ -71,6 +71,7 @@ npm run dev
 | GET | `/api/links/{code}/qr` | QR 코드 PNG |
 | DELETE | `/api/links/{code}` | 링크 + 클릭 기록 삭제 (204) |
 | PUT | `/api/links/{code}/tags` | 링크 태그 전체 교체 `{ "tags": ["work"] }` |
+| PUT | `/api/links/{code}/memo` | 링크 메모 수정 `{ "memo": "..." }` |
 | GET | `/x/{code}` | 단축 링크 리다이렉트(302) + 클릭 적재 |
 | WS | `/ws` → `/topic/clicks/{code}` | 클릭 실시간 구독 |
 

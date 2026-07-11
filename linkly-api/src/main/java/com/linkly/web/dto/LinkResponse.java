@@ -14,7 +14,8 @@ public record LinkResponse(
         Instant createdAt,
         Instant expiresAt,
         boolean expired,
-        List<String> tags) {
+        List<String> tags,
+        String memo) {
 
     public static LinkResponse of(Link link, String baseUrl) {
         return new LinkResponse(
@@ -26,6 +27,7 @@ public record LinkResponse(
                 link.getCreatedAt(),
                 link.getExpiresAt(),
                 link.isExpired(),
-                link.getTags().stream().sorted().toList());
+                link.getTags().stream().sorted().toList(),
+                link.getMemo());
     }
 }

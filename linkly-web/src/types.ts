@@ -8,6 +8,7 @@ export interface LinkResponse {
   expiresAt: string | null;
   expired: boolean;
   tags: string[];
+  memo: string | null;
 }
 
 export interface LabelCount {

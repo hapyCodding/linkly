@@ -75,6 +75,18 @@ export async function updateTags(
   return handle<LinkResponse>(res);
 }
 
+export async function updateMemo(
+  code: string,
+  memo: string,
+): Promise<LinkResponse> {
+  const res = await fetch(`${API_BASE}/api/links/${code}/memo`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ memo }),
+  });
+  return handle<LinkResponse>(res);
+}
+
 export function qrUrl(code: string): string {
   return `${API_BASE}/api/links/${code}/qr`;
 }

@@ -37,6 +37,10 @@ public class Link {
     @Column(length = 255)
     private String title;
 
+    /** 개인 메모 (선택). */
+    @Column(length = 500)
+    private String memo;
+
     @Column(nullable = false)
     private Instant createdAt = Instant.now();
 
@@ -85,6 +89,14 @@ public class Link {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 
     public Instant getCreatedAt() {

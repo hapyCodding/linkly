@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { qrUrl } from "../api";
 import type { LinkResponse } from "../types";
 
@@ -8,6 +8,7 @@ interface Props {
   onSelect: (code: string) => void;
   onDelete: (code: string) => void;
   onUpdateTags: (code: string, tags: string[]) => void;
+  onUpdateMemo: (code: string, memo: string) => void;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -24,6 +25,32 @@ function CopyButton({ text }: { text: string }) {
     >
       {copied ? "복사됨 ✓" : "복사"}
     </button>
+  );
+}
+
+function MemoEditor({
+  memo,
+  onSave,
+}: {
+  memo: string | null;
+  onSave: (memo: string) => void;
+}) {
+  const [value, setValue] = useState(memo ?? "");
+  useEffect(() => setValue(memo ?? ""), [memo]);
+  return (
+    <input
+      className="memo-input"
+      placeholder="📝 메모 추가…"
+      value={value}
+      onClick={(e) => e.stopPropagation()}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => {
+        if (value !== (memo ?? "")) onSave(value);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+      }}
+    />
   );
 }
 
@@ -54,6 +81,7 @@ export function LinkList({
   onSelect,
   onDelete,
   onUpdateTags,
+  onUpdateMemo,
 }: Props) {
   if (links.length === 0) {
     return <p className="empty">조건에 맞는 링크가 없습니다.</p>;
@@ -89,6 +117,10 @@ export function LinkList({
             <div className="long-url" title={link.longUrl}>
               {link.longUrl}
             </div>
+            <MemoEditor
+              memo={link.memo}
+              onSave={(memo) => onUpdateMemo(link.code, memo)}
+            />
             <div className="tags-row" onClick={(e) => e.stopPropagation()}>
               {link.tags.map((tag) => (
                 <span key={tag} className="tag-chip">

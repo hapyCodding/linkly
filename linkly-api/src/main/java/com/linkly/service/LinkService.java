@@ -79,6 +79,26 @@ public class LinkService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    /** 링크 메모를 수정한다 (빈 값이면 null). */
+    @Transactional
+    public Link updateMemo(String code, String memo) {
+        Link link =
+                linkRepository.findByCode(code).orElseThrow(() -> new LinkNotFoundException(code));
+        link.setMemo(normalizeMemo(memo));
+        return linkRepository.save(link);
+    }
+
+    private String normalizeMemo(String memo) {
+        if (memo == null) {
+            return null;
+        }
+        String trimmed = memo.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        return trimmed.length() > 500 ? trimmed.substring(0, 500) : trimmed;
+    }
+
     @Transactional(readOnly = true)
     public List<Link> list() {
         return linkRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));

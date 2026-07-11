@@ -6,6 +6,7 @@ import com.linkly.service.QrService;
 import com.linkly.web.dto.CreateLinkRequest;
 import com.linkly.web.dto.LinkResponse;
 import com.linkly.web.dto.StatsResponse;
+import com.linkly.web.dto.UpdateMemoRequest;
 import com.linkly.web.dto.UpdateTagsRequest;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -63,6 +64,12 @@ public class LinkController {
     public LinkResponse updateTags(
             @PathVariable String code, @RequestBody UpdateTagsRequest request) {
         return LinkResponse.of(linkService.updateTags(code, request.tags()), linkService.baseUrl());
+    }
+
+    @PutMapping("/{code}/memo")
+    public LinkResponse updateMemo(
+            @PathVariable String code, @RequestBody UpdateMemoRequest request) {
+        return LinkResponse.of(linkService.updateMemo(code, request.memo()), linkService.baseUrl());
     }
 
     @DeleteMapping("/{code}")
