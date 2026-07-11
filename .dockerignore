@@ -1,0 +1,14 @@
+# 백엔드 빌드 산출물/로컬 상태
+linkly-api/build/
+linkly-api/.gradle/
+linkly-api/data/
+linkly-api/.db-pass
+# 프론트 로컬 산출물 (이미지 안에서 새로 빌드)
+linkly-web/node_modules/
+linkly-web/dist/
+# 공통
+**/.env
+**/.idea/
+**/*.iml
+**/*.log
+.git/

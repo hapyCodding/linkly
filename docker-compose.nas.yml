@@ -1,0 +1,17 @@
+# NAS(Container Manager) 배포용 — 빌드 없이 PC에서 가져온 이미지만 실행.
+# /volume1/docker/linkly/docker-compose.yml 로 복사해서 사용.
+# (PC에서 docker save 한 linkly-api.tar 를 먼저 Container Manager 이미지 가져오기로 등록할 것)
+services:
+  api:
+    image: linkly-api:0.1.0
+    container_name: linkly-api
+    restart: unless-stopped
+    ports:
+      - "18081:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: mariadb
+      SPRING_DATASOURCE_URL: jdbc:mariadb://192.168.35.2:3307/linkly
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD를 .env에 설정하세요}
+      # 공개 DDNS 주소(포트 기반). 리버스 프록시: HTTPS/DDNS/8444 → HTTP/localhost/18081
+      LINKLY_BASE_URL: ${LINKLY_BASE_URL:-https://psh55401.synology.me:8444}
+      LINKLY_CORS_ALLOWED_ORIGINS: ${LINKLY_CORS_ALLOWED_ORIGINS:-https://psh55401.synology.me:8444}

@@ -1,0 +1,27 @@
+# --- backend (gradle/java) ---
+build/
+.gradle/
+data/
+.db-pass
+.env
+
+# --- docker image export (NAS 반입용, 커밋 금지) ---
+*.tar
+
+*.iml
+
+# --- frontend (node) ---
+node_modules/
+dist/
+*.local
+
+# --- editors / IDE ---
+.idea/
+.vscode/
+*.log
+
+# Eclipse / STS (Gradle Buildship가 재생성)
+bin/
+.classpath
+.project
+.settings/

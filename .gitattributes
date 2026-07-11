@@ -1,0 +1,13 @@
+# 텍스트 파일은 저장소에 LF로 정규화 (플랫폼 간 일관성)
+* text=auto eol=lf
+
+# Windows 배치 파일은 CRLF
+*.bat text eol=crlf
+
+# gradlew 는 반드시 LF (컨테이너/Linux 에서 sh 로 실행됨 — CRLF면 빌드 깨짐)
+gradlew text eol=lf
+
+# 바이너리 (줄바꿈 변환 금지)
+*.jar binary
+*.png binary
+*.ico binary

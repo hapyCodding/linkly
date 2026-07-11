@@ -1,0 +1,13 @@
+# NAS(Synology DS220+)의 MariaDB를 쓰는 프로파일.
+# 실행: DB_PASSWORD=... ./gradlew bootRun --args='--spring.profiles.active=mariadb'
+spring:
+  datasource:
+    url: jdbc:mariadb://192.168.35.2:3307/linkly
+    username: linkly
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
