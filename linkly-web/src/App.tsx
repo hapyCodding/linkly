@@ -12,6 +12,7 @@ export default function App() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [tagFilter, setTagFilter] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<"recent" | "clicks">("recent");
+  const [search, setSearch] = useState("");
 
   async function refresh() {
     try {
@@ -68,8 +69,22 @@ export default function App() {
 
   const allTags = Array.from(new Set(links.flatMap((l) => l.tags))).sort();
   const activeFilter = tagFilter && allTags.includes(tagFilter) ? tagFilter : null;
+  const q = search.trim().toLowerCase();
+  const searchedLinks =
+    q === ""
+      ? links
+      : links.filter(
+          (l) =>
+            l.code.toLowerCase().includes(q) ||
+            l.longUrl.toLowerCase().includes(q) ||
+            (l.title?.toLowerCase().includes(q) ?? false) ||
+            (l.memo?.toLowerCase().includes(q) ?? false) ||
+            l.tags.some((t) => t.toLowerCase().includes(q)),
+        );
   const filteredLinks =
-    activeFilter === null ? links : links.filter((l) => l.tags.includes(activeFilter));
+    activeFilter === null
+      ? searchedLinks
+      : searchedLinks.filter((l) => l.tags.includes(activeFilter));
   const visibleLinks = [...filteredLinks].sort((a, b) =>
     sortBy === "clicks"
       ? b.clickCount - a.clickCount || b.createdAt.localeCompare(a.createdAt)
@@ -93,6 +108,15 @@ export default function App() {
             <p className="form-error">
               ⚠ 백엔드에 연결할 수 없습니다 ({loadError}). API 서버(8081)가 떠 있는지 확인하세요.
             </p>
+          )}
+          {links.length > 0 && (
+            <input
+              className="search-input"
+              type="text"
+              placeholder="🔍 검색 (URL · 제목 · 메모 · 태그)"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           )}
           {links.length > 0 && (
             <div className="sort-bar">
